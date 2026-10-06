@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Aroma</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="header-superior">
+            <h1>Café Aroma</h1>
+            <div class="header-acciones">
+                <button type="button" id="btn-tema" aria-label="Cambiar entre modo claro y oscuro">🌙</button>
+                <button type="button" id="btn-carrito">🛒 Carrito (<span id="contador-carrito">0</span>)</button>
+                <button type="button" id="btn-menu" aria-label="Abrir o cerrar el menú" aria-expanded="false">☰</button>
+            </div>
+        </div>
+        <nav id="menu-nav">
+            <ul>
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#menu">Menú</a></li>
+                <li><a href="#nosotros">Nosotros</a></li>
+                <li><a href="#contacto">Contacto</a></li>
+            </ul>
+        </nav>
+    </header>
+      <div id="banner">
+    <img src="img/banner.jpg" alt="Interior acogedor de Café Aroma con mesas de madera">
+    <h2>Bienvenido a Café Aroma</h2>
+  </div>
+    <main>
+        <section id="menu">
+            <h2>Nuestro Menú</h2>
+
+            <article>
+                <img src="img/cafe-americano.jpg" alt="Taza de café americano recién servida">
+                <h3>Café Americano</h3>
+                <p>Café negro suave, preparado con granos 100% arábica.</p>
+                <span>$4.500</span>
+                <button type="button" class="btn-agregar" data-id="cafe-americano" data-nombre="Café Americano" data-precio="4500">Agregar al carrito</button>
+            </article>
+
+            <article>
+                <img src="img/capuchino.jpg" alt="Capuchino con espuma de leche">
+                <h3>Capuchino</h3>
+                <p>Espresso con leche vaporizada y una capa de espuma.</p>
+                <span>$6.000</span>
+                <button type="button" class="btn-agregar" data-id="capuchino" data-nombre="Capuchino" data-precio="6000">Agregar al carrito</button>
+            </article>
+
+            <article>
+                 <img src="img/croissant.jpg" alt="Croissant recién horneado">
+                <h3>Croissant</h3>
+                <p>Hojaldre horneado, crocante por fuera y suave por dentro.</p>
+                <span>$5.000</span>
+                <button type="button" class="btn-agregar" data-id="croissant" data-nombre="Croissant" data-precio="5000">Agregar al carrito</button>
+            </article>
+        </section>
+        <section id="nosotros">
+            <h2>Sobre Nosotros</h2>
+            <div class="nosotros-contenido">
+                <img src="img/barista.jpg" alt="Barista preparando café en Café Aroma">
+                <p>
+                Café Aroma nació en 2020 con una idea simple: servir café de
+                buena calidad en un espacio cálido y cercano. Seleccionamos
+                nuestros granos de fincas locales y horneamos el pan todos los días.
+                </p>
+            </div>
+        </section>
+        <section id="contacto">
+            <h2>Contáctanos</h2>
+            <address>
+                <p>Calle 10 # 5-23, Bogotá</p>
+                <p>Teléfono: 300 123 4567</p>
+                <p>Horario: Lunes a domingo, 7:00 a.m. - 8:00 p.m.</p>
+            </address>
+            <form id="form-reserva">
+                <h3>Reserva tu mesa</h3>
+
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre">
+
+                <label for="correo">Correo</label>
+                <input type="email" id="correo" name="correo">
+
+                <label for="personas">Número de personas</label>
+                <input type="number" id="personas" name="personas">
+
+                <button type="submit">Reservar</button>
+
+                <p id="mensaje-error"></p>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2026 Café Aroma. Todos los derechos reservados.</p>
+    </footer> 
+    <div id="fondo-carrito"></div>
+    <aside id="carrito" aria-label="Carrito de compras" aria-hidden="true">
+        <div class="carrito-cabecera">
+            <h2>Tu pedido</h2>
+            <button type="button" id="cerrar-carrito" aria-label="Cerrar carrito">✕</button>
+        </div>
+        <ul id="lista-carrito"></ul>
+        <p id="carrito-vacio">Tu carrito está vacío.</p>
+        <div class="carrito-pie">
+            <p class="carrito-total">Total: <strong id="total-carrito">$0</strong></p>
+            <button type="button" id="btn-finalizar">Finalizar pedido</button>
+            <button type="button" id="btn-vaciar">Vaciar Carrito</button>
+            <p id="mensaje-carrito"></p>
+        </div>
+    </aside>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
