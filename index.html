@@ -15,6 +15,7 @@
             <h1>Café Aroma</h1>
             <div class="header-acciones">
                 <button type="button" id="btn-tema" aria-label="Cambiar entre modo claro y oscuro">🌙</button>
+                <button type="button" id="btn-cuenta">👤 Ingresar</button>
                 <button type="button" id="btn-carrito">🛒 Carrito (<span id="contador-carrito">0</span>)</button>
                 <button type="button" id="btn-menu" aria-label="Abrir o cerrar el menú" aria-expanded="false">☰</button>
             </div>
@@ -114,6 +115,55 @@
             <p id="mensaje-carrito"></p>
         </div>
     </aside>
+
+    <dialog id="modal-cuenta" aria-labelledby="titulo-cuenta">
+        <div class="cuenta-cabecera">
+            <h2 id="titulo-cuenta">Tu cuenta</h2>
+            <button type="button" id="cerrar-cuenta" aria-label="Cerrar">✕</button>
+        </div>
+
+        <div class="cuenta-pestanas" role="tablist">
+            <button type="button" role="tab" id="tab-registro" class="activa" aria-selected="true">Registrarme</button>
+            <button type="button" role="tab" id="tab-ingreso" aria-selected="false">Ingresar</button>
+        </div>
+
+        <form id="form-registro" novalidate>
+            <label for="reg-nombre">Nombre completo</label>
+            <input type="text" id="reg-nombre" autocomplete="name">
+
+            <label for="reg-correo">Correo</label>
+            <input type="email" id="reg-correo" autocomplete="email">
+
+            <label for="reg-telefono">Teléfono (opcional)</label>
+            <input type="tel" id="reg-telefono" autocomplete="tel">
+
+            <label for="reg-clave">Contraseña (mínimo 6 caracteres)</label>
+            <input type="password" id="reg-clave" autocomplete="new-password">
+
+            <label for="reg-clave2">Confirmar contraseña</label>
+            <input type="password" id="reg-clave2" autocomplete="new-password">
+
+            <button type="submit" class="btn-cuenta-principal">Crear cuenta</button>
+            <p class="mensaje-cuenta" id="mensaje-registro"></p>
+        </form>
+
+        <form id="form-ingreso" novalidate hidden>
+            <label for="ing-correo">Correo</label>
+            <input type="email" id="ing-correo" autocomplete="email">
+
+            <label for="ing-clave">Contraseña</label>
+            <input type="password" id="ing-clave" autocomplete="current-password">
+
+            <button type="submit" class="btn-cuenta-principal">Ingresar</button>
+            <p class="mensaje-cuenta" id="mensaje-ingreso"></p>
+        </form>
+
+        <div id="panel-sesion" hidden>
+            <p>Hola, <strong id="sesion-nombre"></strong> 👋</p>
+            <p id="sesion-correo" class="sesion-correo"></p>
+            <button type="button" id="btn-salir" class="btn-cuenta-principal">Cerrar sesión</button>
+        </div>
+    </dialog>
 
     <script src="js/app.js"></script>
 </body>
