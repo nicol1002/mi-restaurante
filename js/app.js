@@ -3,6 +3,7 @@
 //  1. Validación del formulario de reservas
 //  2. Interfaz: menú responsive y modo claro / oscuro
 //  3. Carrito de compras básico
+//  4. Registro e ingreso de clientes
 // =====================================================
 
 // ---------- 1. FORMULARIO DE RESERVAS ----------
@@ -297,9 +298,259 @@ document.getElementById("btn-finalizar").addEventListener("click", function () {
 
   vaciarCarrito();
   mensajeCarrito.style.color = "green";
+  const sesion = obtenerSesion();
   mensajeCarrito.textContent =
-    "¡Pedido recibido por " + formatearPrecio(total) + "! Gracias por elegirnos.";
+    "¡Pedido recibido por " + formatearPrecio(total) + "! Gracias por elegirnos" +
+    (sesion ? ", " + sesion.nombre : "") + ".";
 });
 
 // Dibuja el carrito al cargar la página (recupera lo guardado)
 actualizarCarrito();
+
+
+// ---------- 4. REGISTRO E INGRESO DE CLIENTES ----------
+// Nota: este sitio no tiene servidor, así que las cuentas se guardan en el
+// navegador (localStorage). Sirve para practicar y para la demo; en un sitio
+// real los usuarios y contraseñas deben guardarse en un backend con base de datos.
+
+const CLAVE_USUARIOS = "cafe-aroma-usuarios";
+const CLAVE_SESION = "cafe-aroma-sesion";
+
+const modalCuenta = document.getElementById("modal-cuenta");
+const botonCuenta = document.getElementById("btn-cuenta");
+const tabRegistro = document.getElementById("tab-registro");
+const tabIngreso = document.getElementById("tab-ingreso");
+const formRegistro = document.getElementById("form-registro");
+const formIngreso = document.getElementById("form-ingreso");
+const panelSesion = document.getElementById("panel-sesion");
+const mensajeRegistro = document.getElementById("mensaje-registro");
+const mensajeIngreso = document.getElementById("mensaje-ingreso");
+
+function cargarUsuarios() {
+  try {
+    const guardado = JSON.parse(localStorage.getItem(CLAVE_USUARIOS));
+    return Array.isArray(guardado) ? guardado : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function guardarUsuarios(usuarios) {
+  try {
+    localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(usuarios));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+// Devuelve el usuario con sesión iniciada (o null)
+function obtenerSesion() {
+  try {
+    const correo = localStorage.getItem(CLAVE_SESION);
+    if (!correo) return null;
+    return (
+      cargarUsuarios().find(function (u) {
+        return u.correo === correo;
+      }) || null
+    );
+  } catch (error) {
+    return null;
+  }
+}
+
+// La contraseña nunca se guarda en texto plano: se guarda su hash SHA-256 con una "sal" aleatoria
+async function hashClave(clave, sal) {
+  const texto = sal + clave;
+  if (window.crypto && window.crypto.subtle) {
+    const bytes = new TextEncoder().encode(texto);
+    const resumen = await crypto.subtle.digest("SHA-256", bytes);
+    return Array.from(new Uint8Array(resumen))
+      .map(function (b) {
+        return b.toString(16).padStart(2, "0");
+      })
+      .join("");
+  }
+  // Respaldo para navegadores sin crypto.subtle (por ejemplo, páginas sin HTTPS)
+  let hash = 5381;
+  for (let i = 0; i < texto.length; i++) {
+    hash = ((hash << 5) + hash + texto.charCodeAt(i)) | 0;
+  }
+  return "d" + hash;
+}
+
+function crearSal() {
+  const arreglo = new Uint8Array(16);
+  crypto.getRandomValues(arreglo);
+  return Array.from(arreglo)
+    .map(function (b) {
+      return b.toString(16).padStart(2, "0");
+    })
+    .join("");
+}
+
+function correoValido(correo) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
+}
+
+function mostrarMensaje(elemento, texto, esError) {
+  elemento.style.color = esError ? "#b03030" : "green";
+  elemento.textContent = texto;
+}
+
+// Cambia entre las pestañas "Registrarme" e "Ingresar"
+function mostrarPestana(cual) {
+  const registro = cual === "registro";
+  formRegistro.hidden = !registro;
+  formIngreso.hidden = registro;
+  tabRegistro.classList.toggle("activa", registro);
+  tabIngreso.classList.toggle("activa", !registro);
+  tabRegistro.setAttribute("aria-selected", registro);
+  tabIngreso.setAttribute("aria-selected", !registro);
+  mensajeRegistro.textContent = "";
+  mensajeIngreso.textContent = "";
+}
+
+// Actualiza el botón del encabezado, el panel de sesión y el formulario de reservas
+function actualizarSesion() {
+  const usuario = obtenerSesion();
+  const tabs = document.querySelector(".cuenta-pestanas");
+
+  if (usuario) {
+    botonCuenta.textContent = "👤 " + usuario.nombre.split(" ")[0];
+    document.getElementById("sesion-nombre").textContent = usuario.nombre;
+    document.getElementById("sesion-correo").textContent = usuario.correo;
+    tabs.hidden = true;
+    formRegistro.hidden = true;
+    formIngreso.hidden = true;
+    panelSesion.hidden = false;
+
+    // Completa la reserva con los datos del cliente
+    document.getElementById("nombre").value = usuario.nombre;
+    document.getElementById("correo").value = usuario.correo;
+  } else {
+    botonCuenta.textContent = "👤 Ingresar";
+    tabs.hidden = false;
+    panelSesion.hidden = true;
+    mostrarPestana("registro");
+  }
+}
+
+function iniciarSesion(correo) {
+  try {
+    localStorage.setItem(CLAVE_SESION, correo);
+  } catch (error) {
+    // Si no se puede guardar, la sesión dura solo hasta recargar
+  }
+  actualizarSesion();
+}
+
+formRegistro.addEventListener("submit", async function (evento) {
+  evento.preventDefault();
+
+  const nombre = document.getElementById("reg-nombre").value.trim();
+  const correo = document.getElementById("reg-correo").value.trim().toLowerCase();
+  const telefono = document.getElementById("reg-telefono").value.trim();
+  const clave = document.getElementById("reg-clave").value;
+  const clave2 = document.getElementById("reg-clave2").value;
+
+  if (nombre.length < 3) {
+    mostrarMensaje(mensajeRegistro, "Escribe tu nombre completo.", true);
+    return;
+  }
+  if (!correoValido(correo)) {
+    mostrarMensaje(mensajeRegistro, "Escribe un correo válido.", true);
+    return;
+  }
+  if (telefono !== "" && !/^[0-9+\s-]{7,15}$/.test(telefono)) {
+    mostrarMensaje(mensajeRegistro, "El teléfono solo puede tener números (7 a 15 dígitos).", true);
+    return;
+  }
+  if (clave.length < 6) {
+    mostrarMensaje(mensajeRegistro, "La contraseña debe tener mínimo 6 caracteres.", true);
+    return;
+  }
+  if (clave !== clave2) {
+    mostrarMensaje(mensajeRegistro, "Las contraseñas no coinciden.", true);
+    return;
+  }
+
+  const usuarios = cargarUsuarios();
+  const yaExiste = usuarios.some(function (u) {
+    return u.correo === correo;
+  });
+  if (yaExiste) {
+    mostrarMensaje(mensajeRegistro, "Ya hay una cuenta con ese correo. Prueba a ingresar.", true);
+    return;
+  }
+
+  const sal = crearSal();
+  usuarios.push({
+    nombre: nombre,
+    correo: correo,
+    telefono: telefono,
+    sal: sal,
+    clave: await hashClave(clave, sal),
+    creado: new Date().toISOString(),
+  });
+
+  if (!guardarUsuarios(usuarios)) {
+    mostrarMensaje(mensajeRegistro, "No se pudo guardar la cuenta en este navegador.", true);
+    return;
+  }
+
+  formRegistro.reset();
+  iniciarSesion(correo);
+});
+
+formIngreso.addEventListener("submit", async function (evento) {
+  evento.preventDefault();
+
+  const correo = document.getElementById("ing-correo").value.trim().toLowerCase();
+  const clave = document.getElementById("ing-clave").value;
+
+  const usuario = cargarUsuarios().find(function (u) {
+    return u.correo === correo;
+  });
+
+  // Mismo mensaje si falla el correo o la clave, para no revelar qué correos existen
+  if (!usuario || (await hashClave(clave, usuario.sal)) !== usuario.clave) {
+    mostrarMensaje(mensajeIngreso, "Correo o contraseña incorrectos.", true);
+    return;
+  }
+
+  formIngreso.reset();
+  iniciarSesion(correo);
+});
+
+document.getElementById("btn-salir").addEventListener("click", function () {
+  try {
+    localStorage.removeItem(CLAVE_SESION);
+  } catch (error) {
+    // nada que hacer
+  }
+  document.getElementById("nombre").value = "";
+  document.getElementById("correo").value = "";
+  actualizarSesion();
+});
+
+tabRegistro.addEventListener("click", function () {
+  mostrarPestana("registro");
+});
+tabIngreso.addEventListener("click", function () {
+  mostrarPestana("ingreso");
+});
+
+botonCuenta.addEventListener("click", function () {
+  modalCuenta.showModal();
+});
+document.getElementById("cerrar-cuenta").addEventListener("click", function () {
+  modalCuenta.close();
+});
+// Clic fuera de la tarjeta cierra el modal
+modalCuenta.addEventListener("click", function (evento) {
+  if (evento.target === modalCuenta) modalCuenta.close();
+});
+
+// Al cargar la página, recupera la sesión si existía
+actualizarSesion();
