@@ -518,3 +518,149 @@ body.oscuro #lista-carrito li {
     width: 100%;
   }
 }
+
+
+/* ===== Registro e ingreso de clientes ===== */
+
+#btn-cuenta {
+  background-color: var(--color-secundario);
+  color: #3a2e2a;
+  border: none;
+  border-radius: 20px;
+  padding: 0.4rem 1rem;
+  font-family: inherit;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  max-width: 10rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#btn-cuenta:hover {
+  background-color: white;
+}
+
+#modal-cuenta {
+  margin: auto;
+  width: 400px;
+  max-width: calc(100% - 2rem);
+  max-height: calc(100% - 2rem);
+  overflow-y: auto;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+#modal-cuenta::backdrop {
+  background-color: rgba(0, 0, 0, 0.45);
+}
+
+.cuenta-cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--color-principal);
+  color: white;
+  padding: 1rem 1.5rem;
+}
+
+#cerrar-cuenta {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.cuenta-pestanas {
+  display: flex;
+}
+
+.cuenta-pestanas button {
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  border-bottom: 3px solid transparent;
+  background: none;
+  color: var(--color-texto);
+  font-family: inherit;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.cuenta-pestanas button.activa {
+  border-bottom-color: var(--color-secundario);
+  color: var(--color-titulo);
+}
+
+#modal-cuenta form,
+#panel-sesion {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.5rem 1.5rem;
+}
+
+#modal-cuenta form[hidden],
+#panel-sesion[hidden],
+.cuenta-pestanas[hidden] {
+  display: none;
+}
+
+#modal-cuenta label {
+  font-weight: bold;
+  margin-top: 0.8rem;
+  margin-bottom: 0.3rem;
+}
+
+#modal-cuenta input {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--color-tarjeta);
+  color: var(--color-texto);
+}
+
+.btn-cuenta-principal {
+  margin-top: 1.2rem;
+  padding: 0.7rem;
+  background-color: var(--color-principal);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-cuenta-principal:hover {
+  background-color: var(--color-secundario);
+}
+
+.mensaje-cuenta {
+  margin-top: 0.8rem;
+  font-weight: bold;
+  min-height: 1.2em;
+}
+
+.sesion-correo {
+  color: #7a6a60;
+  margin-top: 0.3rem;
+}
+
+body.oscuro #modal-cuenta input {
+  border-color: #6b5a4c;
+}
+
+@media (max-width: 700px) {
+  #btn-cuenta {
+    max-width: 7rem;
+    padding: 0.4rem 0.7rem;
+  }
+}
